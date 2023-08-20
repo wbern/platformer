@@ -5,10 +5,10 @@ export default async function Home() {
   const { searchResult } = await getProps();
 
   return (
-    <main className={styles.main}>
+    <main>
       <div>
         <h2>Client-side env</h2>
-        <div className={styles.description}>
+        <div>
           {Object.keys(clientValidatedEnv).map((key) => (
             <div key={key}>
               {key}:{" "}
@@ -19,7 +19,7 @@ export default async function Home() {
       </div>
       <div>
         <h2>Server data</h2>
-        <div className={styles.description}>{searchResult}</div>
+        <div>{searchResult}</div>
       </div>
     </main>
   );
