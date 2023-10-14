@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NavBar from "./components/NavBar/NavBar";
 import ThemeRegistry from "./components/ThemeRegistry";
+import "normalize.css/normalize.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,12 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html style={{ height: "100%" }} lang="en">
+      <body
+        style={{ background: "#333", height: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: "hidden" }}
+        className={inter.className}
+      >
         <ThemeRegistry>
-          <header>
+          {/* <header>
             <NavBar />
-          </header>
+          </header> */}
           {children}
         </ThemeRegistry>
       </body>
