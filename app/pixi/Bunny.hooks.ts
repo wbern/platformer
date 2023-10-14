@@ -1,24 +1,66 @@
 import { useTick } from "@pixi/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export const useGravity = (y: number, floorLevel: number) => {
-  const [gravity, setGravity] = useState(0.1); // Increased initial gravity
-  const maxGravity = 0.5;
-  const gravityFactor = 0.1; // Increased gravity factor
-  const gravityExp = 1.5; // Non-integer exponent to increase gravity moderately fast
+export const useAcceleration = (
+  position: number,
+  stopLevel: number,
+  initialVelocity = 0.1
+) => {
+  const [isGrounded, setIsGrounded] = useState(true); // To track whether we're on the ground
+
+  const [velocity, setVelocity] = useState(initialVelocity);
+  const jumpActivated = useRef(false);
+
+  const dampingFactor = 0.95; // Example value, adjust for your needs
+  const terminalVelocity = 2;
+  const accelerationFactor = 0.3;
+  const accelerationExponent = 1.5;
 
   useTick(() => {
-    if (y < floorLevel) {
-      setGravity((prev) => {
-        const newGravity = prev + gravityFactor * Math.pow(prev, gravityExp);
-        return Math.min(newGravity, maxGravity);
+    if (jumpActivated.current) {
+      setIsGrounded(false);
+      jumpActivated.current = false;
+      setVelocity(-10);
+    } else if (velocity < 0 || position < stopLevel) {
+      setIsGrounded(false);
+      setVelocity((prev) => {
+        let newVelocity;
+
+        if (prev < -0.5) {
+          // character is moving upwards, adjust the acceleration factor for a smoother jump
+          newVelocity =
+            prev +
+            (accelerationFactor / 4) *
+              Math.pow(Math.abs(prev), accelerationExponent);
+
+          console.log("newVelocity", newVelocity);
+        } else {
+          // character is moving downwards or is stationary, normal acceleration
+          newVelocity = Math.max(
+            Math.min(
+              prev +
+                accelerationFactor *
+                  Math.pow(Math.abs(prev), accelerationExponent),
+              terminalVelocity
+            ),
+            initialVelocity
+          );
+        }
+
+        return newVelocity;
+        // let res = Math.max(
+        //   Math.min(newVelocity, terminalVelocity),
+        //   initialVelocity
+        // );
+        // return res;
       });
     } else {
-      setGravity(0);
+      setIsGrounded(true);
+      setVelocity(0);
     }
   });
 
-  return gravity;
+  return { isGrounded, velocity, jump: () => (jumpActivated.current = true) };
 };
 
 type KeyState = {
