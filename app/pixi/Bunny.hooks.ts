@@ -21,47 +21,60 @@ export const useGravity = (y: number, floorLevel: number) => {
   return gravity;
 };
 
-// Define a type for our keyState for TypeScript
 type KeyState = {
   left: boolean;
   right: boolean;
+  space: boolean; // Adding space key to our key state
 };
 
-// Define a custom hook that returns the current keyState
 export const useKeyboard = (): KeyState => {
-  // Define a state variable to hold our key states
   const [keyState, setKeyState] = useState<KeyState>({
     left: false,
     right: false,
+    space: false, // Initial state for space key
   });
 
-  // UseEffect to handle key presses and releases
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") {
-        setKeyState((prev) => ({ ...prev, right: true }));
-      } else if (e.key === "ArrowLeft") {
-        setKeyState((prev) => ({ ...prev, left: true }));
+      switch (e.key) {
+        case "ArrowRight":
+          setKeyState((prev) => ({ ...prev, right: true }));
+          break;
+        case "ArrowLeft":
+          setKeyState((prev) => ({ ...prev, left: true }));
+          break;
+        case " ":
+          setKeyState((prev) => ({ ...prev, space: true }));
+          break;
+        default:
+          break;
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") {
-        setKeyState((prev) => ({ ...prev, right: false }));
-      } else if (e.key === "ArrowLeft") {
-        setKeyState((prev) => ({ ...prev, left: false }));
+      switch (e.key) {
+        case "ArrowRight":
+          setKeyState((prev) => ({ ...prev, right: false }));
+          break;
+        case "ArrowLeft":
+          setKeyState((prev) => ({ ...prev, left: false }));
+          break;
+        case " ":
+          setKeyState((prev) => ({ ...prev, space: false }));
+          break;
+        default:
+          break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
-    // Cleanup event listeners when component is unmounted
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, []); // Empty dependency array means this useEffect runs once when component mounts
+  }, []);
 
   return keyState;
 };
