@@ -1,49 +1,50 @@
 import { useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 
-export const useAcceleration = (
-  position: number,
+export const useVelocitySystem = (
+  components: { velocity: ReturnType<typeof useVelocityBaseComponent> },
   stopLevel: number,
-  initialVelocity = 0.1
+  initialVelocity = { x: 0.0, y: 0.1 },
+  jumpVelocity = -10
 ) => {
-  const [isGrounded, setIsGrounded] = useState(true); // To track whether we're on the ground
-
-  const [velocity, setVelocity] = useState(initialVelocity);
+  const [isGrounded, setIsGrounded] = useState(true);
   const jumpActivated = useRef(false);
-
-  const dampingFactor = 0.95; // Example value, adjust for your needs
-  const terminalVelocity = 2;
-  const accelerationFactor = 0.3;
-  const accelerationExponent = 1.5;
 
   useTick(() => {
     if (jumpActivated.current) {
       setIsGrounded(false);
       jumpActivated.current = false;
-      setVelocity(-10);
-    } else if (velocity < 0 || position < stopLevel) {
+      components.velocity.setVelocityY(jumpVelocity);
+    } else if (
+      components.velocity.velocityY < 0 ||
+      components.velocity.positionY < stopLevel
+    ) {
       setIsGrounded(false);
-      setVelocity((prev) => {
+      components.velocity.setVelocityY((prev) => {
         let newVelocity;
 
         if (prev < -0.5) {
           // character is moving upwards, adjust the acceleration factor for a smoother jump
           newVelocity =
             prev +
-            (accelerationFactor / 4) *
-              Math.pow(Math.abs(prev), accelerationExponent);
-
-          console.log("newVelocity", newVelocity);
+            (components.velocity.accelerationFactor / 4) *
+              Math.pow(
+                Math.abs(prev),
+                components.velocity.accelerationExponent
+              );
         } else {
           // character is moving downwards or is stationary, normal acceleration
           newVelocity = Math.max(
             Math.min(
               prev +
-                accelerationFactor *
-                  Math.pow(Math.abs(prev), accelerationExponent),
-              terminalVelocity
+                components.velocity.accelerationFactor *
+                  Math.pow(
+                    Math.abs(prev),
+                    components.velocity.accelerationExponent
+                  ),
+              components.velocity.terminalVelocity
             ),
-            initialVelocity
+            initialVelocity.y
           );
         }
 
@@ -56,11 +57,47 @@ export const useAcceleration = (
       });
     } else {
       setIsGrounded(true);
-      setVelocity(0);
+      components.velocity.setVelocityY(0);
     }
   });
 
-  return { isGrounded, velocity, jump: () => (jumpActivated.current = true) };
+  const jump = () => (jumpActivated.current = true);
+
+  // Movement handling might include velocity adjustment
+  const move = (axis: "x" | "y", value: number) => {
+    if (axis === "x") {
+      components.velocity.setVelocityX(value);
+    } else {
+      components.velocity.setVelocityY(value);
+    }
+  };
+
+  return {
+    isGrounded,
+    jump,
+    move,
+  };
+};
+
+export const useVelocityBaseComponent = (startX: number, startY: number) => {
+  const [velocityX, setVelocityX] = useState(0);
+  const [velocityY, setVelocityY] = useState(0.1);
+  const [positionX, setPositionX] = useState(startX);
+  const [positionY, setPositionY] = useState(startY);
+
+  return {
+    positionX,
+    setPositionX,
+    positionY,
+    setPositionY,
+    velocityX,
+    setVelocityX,
+    velocityY,
+    setVelocityY,
+    terminalVelocity: 2,
+    accelerationFactor: 0.3,
+    accelerationExponent: 1.5,
+  };
 };
 
 type KeyState = {
