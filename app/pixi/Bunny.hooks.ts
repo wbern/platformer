@@ -1,8 +1,8 @@
 import { useTick } from "@pixi/react";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 export const useVelocitySystem = (
-  components: { velocity: ReturnType<typeof useVelocityBaseComponent> },
+  components: VelocityBaseComponent & DirectionsComponent,
   stopLevel: number,
   initialVelocity = { x: 0.0, y: 0.1 },
   jumpVelocity = -10
@@ -11,53 +11,83 @@ export const useVelocitySystem = (
   const jumpActivated = useRef(false);
 
   useTick(() => {
-    if (jumpActivated.current) {
-      setIsGrounded(false);
-      jumpActivated.current = false;
-      components.velocity.setVelocityY(jumpVelocity);
-    } else if (
-      components.velocity.velocityY < 0 ||
-      components.velocity.positionY < stopLevel
-    ) {
-      setIsGrounded(false);
-      components.velocity.setVelocityY((prev) => {
-        let newVelocity;
+    if (components.velocity) {
+      if (jumpActivated.current) {
+        setIsGrounded(false);
+        jumpActivated.current = false;
+        components.velocity.setVelocityY(jumpVelocity);
+      } else if (
+        components.velocity.velocityY < 0 ||
+        components.velocity.positionY < stopLevel
+      ) {
+        setIsGrounded(false);
+        components.velocity.setVelocityY((prev) => {
+          if (components.velocity) {
+            let newVelocity;
 
-        if (prev < -0.5) {
-          // character is moving upwards, adjust the acceleration factor for a smoother jump
-          newVelocity =
-            prev +
-            (components.velocity.accelerationFactor / 4) *
-              Math.pow(
-                Math.abs(prev),
-                components.velocity.accelerationExponent
-              );
-        } else {
-          // character is moving downwards or is stationary, normal acceleration
-          newVelocity = Math.max(
-            Math.min(
-              prev +
-                components.velocity.accelerationFactor *
+            if (prev < -0.5) {
+              // character is moving upwards, adjust the acceleration factor for a smoother jump
+              newVelocity =
+                prev +
+                (components.velocity.accelerationFactor / 4) *
                   Math.pow(
                     Math.abs(prev),
                     components.velocity.accelerationExponent
-                  ),
-              components.velocity.terminalVelocity
-            ),
-            initialVelocity.y
-          );
-        }
+                  );
+            } else {
+              // character is moving downwards or is stationary, normal acceleration
+              newVelocity = Math.max(
+                Math.min(
+                  prev +
+                    components.velocity.accelerationFactor *
+                      Math.pow(
+                        Math.abs(prev),
+                        components.velocity.accelerationExponent
+                      ),
+                  components.velocity.terminalVelocity
+                ),
+                initialVelocity.y
+              );
+            }
 
-        return newVelocity;
-        // let res = Math.max(
-        //   Math.min(newVelocity, terminalVelocity),
-        //   initialVelocity
-        // );
-        // return res;
+            return newVelocity;
+          }
+          return prev;
+          // let res = Math.max(
+          //   Math.min(newVelocity, terminalVelocity),
+          //   initialVelocity
+          // );
+          // return res;
+        });
+      } else {
+        setIsGrounded(true);
+        components.velocity.setVelocityY(0);
+      }
+    }
+
+    // do the movement
+    if (components.directions && components.velocity) {
+      components.velocity.setPositionX((x) => {
+        if (components.directions && components.velocity) {
+          let newX = x + components.velocity.velocityX;
+          if (components.directions.directionsInput.right) {
+            newX += components.directions.speedX;
+          }
+          if (components.directions.directionsInput.left) {
+            newX -= components.directions.speedX;
+          }
+
+          return newX;
+        }
+        return x;
       });
-    } else {
-      setIsGrounded(true);
-      components.velocity.setVelocityY(0);
+    }
+
+    if (components.velocity) {
+      components.velocity.setPositionY((y) => {
+        let newY = y + components.velocity.velocityY;
+        return newY;
+      });
     }
   });
 
@@ -79,24 +109,45 @@ export const useVelocitySystem = (
   };
 };
 
-export const useVelocityBaseComponent = (startX: number, startY: number) => {
+export type VelocityBaseComponent = {
+  velocity: {
+    positionX: number;
+    setPositionX: Dispatch<SetStateAction<number>>;
+    positionY: number;
+    setPositionY: Dispatch<SetStateAction<number>>;
+    velocityX: number;
+    setVelocityX: Dispatch<SetStateAction<number>>;
+    velocityY: number;
+    setVelocityY: Dispatch<SetStateAction<number>>;
+    terminalVelocity: number;
+    accelerationFactor: number;
+    accelerationExponent: number;
+  };
+};
+
+export const useVelocityBaseComponent = (
+  startX: number,
+  startY: number
+): VelocityBaseComponent => {
   const [velocityX, setVelocityX] = useState(0);
   const [velocityY, setVelocityY] = useState(0.1);
   const [positionX, setPositionX] = useState(startX);
   const [positionY, setPositionY] = useState(startY);
 
   return {
-    positionX,
-    setPositionX,
-    positionY,
-    setPositionY,
-    velocityX,
-    setVelocityX,
-    velocityY,
-    setVelocityY,
-    terminalVelocity: 2,
-    accelerationFactor: 0.3,
-    accelerationExponent: 1.5,
+    velocity: {
+      positionX,
+      setPositionX,
+      positionY,
+      setPositionY,
+      velocityX,
+      setVelocityX,
+      velocityY,
+      setVelocityY,
+      terminalVelocity: 2,
+      accelerationFactor: 0.3,
+      accelerationExponent: 1.5,
+    },
   };
 };
 
@@ -106,24 +157,87 @@ type KeyState = {
   space: boolean; // Adding space key to our key state
 };
 
-export const useKeyboard = (): KeyState => {
-  const [keyState, setKeyState] = useState<KeyState>({
+export type DirectionsComponent = {
+  directions: {
+    directionsInput: KeyState;
+    setDirectionsInput: Dispatch<SetStateAction<KeyState>>;
+    speedX: number;
+    JUMP_VELOCITY: number;
+  };
+};
+
+export const useDirectionsComponent = (): DirectionsComponent => {
+  const [directionsInput, setDirectionsInput] = useState<KeyState>({
     left: false,
     right: false,
     space: false, // Initial state for space key
   });
 
+  const speedX = 2; // Speed of horizontal movement
+  const JUMP_VELOCITY = 10; // Define how much force to apply upwards during a jump
+
+  return {
+    directions: {
+      directionsInput,
+      setDirectionsInput,
+      speedX,
+      JUMP_VELOCITY,
+    },
+  };
+};
+
+export const useJumpSystem = (
+  components: DirectionsComponent,
+  coupledAndUglyVelocitySystem: ReturnType<typeof useVelocitySystem>
+) => {
+  const jumping = useRef(false);
+
+  useEffect(() => {
+    if (
+      components.directions.directionsInput.space &&
+      coupledAndUglyVelocitySystem.isGrounded &&
+      !jumping.current
+    ) {
+      jumping.current = true;
+      coupledAndUglyVelocitySystem.jump();
+    }
+
+    if (
+      !components.directions.directionsInput.space &&
+      jumping.current &&
+      coupledAndUglyVelocitySystem.isGrounded
+    ) {
+      jumping.current = false;
+    }
+  }, [
+    coupledAndUglyVelocitySystem,
+    components.directions.directionsInput.space,
+  ]);
+};
+
+export const useKeyboardSystem = (
+  components: ReturnType<typeof useDirectionsComponent>
+): void => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case "ArrowRight":
-          setKeyState((prev) => ({ ...prev, right: true }));
+          components.directions.setDirectionsInput((prev) => ({
+            ...prev,
+            right: true,
+          }));
           break;
         case "ArrowLeft":
-          setKeyState((prev) => ({ ...prev, left: true }));
+          components.directions.setDirectionsInput((prev) => ({
+            ...prev,
+            left: true,
+          }));
           break;
         case " ":
-          setKeyState((prev) => ({ ...prev, space: true }));
+          components.directions.setDirectionsInput((prev) => ({
+            ...prev,
+            space: true,
+          }));
           break;
         default:
           break;
@@ -133,13 +247,22 @@ export const useKeyboard = (): KeyState => {
     const handleKeyUp = (e: KeyboardEvent) => {
       switch (e.key) {
         case "ArrowRight":
-          setKeyState((prev) => ({ ...prev, right: false }));
+          components.directions.setDirectionsInput((prev) => ({
+            ...prev,
+            right: false,
+          }));
           break;
         case "ArrowLeft":
-          setKeyState((prev) => ({ ...prev, left: false }));
+          components.directions.setDirectionsInput((prev) => ({
+            ...prev,
+            left: false,
+          }));
           break;
         case " ":
-          setKeyState((prev) => ({ ...prev, space: false }));
+          components.directions.setDirectionsInput((prev) => ({
+            ...prev,
+            space: false,
+          }));
           break;
         default:
           break;
@@ -154,6 +277,4 @@ export const useKeyboard = (): KeyState => {
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
-
-  return keyState;
 };
