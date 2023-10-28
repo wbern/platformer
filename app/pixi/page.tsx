@@ -42,15 +42,10 @@ export const Pixi = () => {
             startX={0}
             startY={snapSingleCoordToGrid(GRID_SIZE, height - GRID_SIZE * 2)}
           />
-          <Platform startX={50} startY={50} />
-          {/* <Sprite
-            image="https://pixijs.io/pixi-react/img/bunny.png"
-            width={16}
-            height={16}
-            x={200}
-            y={100}
-            anchor={{ x: 0.5, y: 0.5 }}
-          /> */}
+          <Platform
+            startX={50}
+            startY={snapSingleCoordToGrid(GRID_SIZE, height)}
+          />
         </Container>
       </Stage>
     )

@@ -31,7 +31,7 @@ export const Platform = ({ startX, startY }: Props) => {
       height={components.dimensions.height}
       anchor={0.5}
       x={components.position.positionX}
-      y={components.position.positionY}
+      y={components.position.positionY - components.dimensions.topOffset}
     />
   );
 };
