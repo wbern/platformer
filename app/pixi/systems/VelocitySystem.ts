@@ -1,9 +1,9 @@
 import { useTick } from "@pixi/react";
 import { useRef, useState } from "react";
-import { DimensionsComponent } from "../components/useDimensionsComponent";
-import { DirectionsComponent } from "../components/useDirectionsComponent";
-import { VelocityComponent } from "../components/useVelocityComponent";
-import { PositionComponent } from "../components/usePositionComponent";
+import { DimensionsComponent } from "../components/DimensionsComponent";
+import { DirectionsComponent } from "../components/DirectionsComponent";
+import { VelocityComponent } from "../components/VelocityComponent";
+import { PositionComponent } from "../components/PositionComponent";
 
 export const useVelocitySystem = (
   components: VelocityComponent &

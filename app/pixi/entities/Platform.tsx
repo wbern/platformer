@@ -1,13 +1,13 @@
 import { Stage, Sprite, Container, useTick } from "@pixi/react";
 import { useState, useEffect, useRef } from "react";
-import { useVelocityComponent } from "../components/useVelocityComponent";
-import { useDimensionsComponent } from "../components/useDimensionsComponent";
-import { useDirectionsComponent } from "../components/useDirectionsComponent";
-import { useKeyboardSystem } from "../systems/useKeyboardSystem";
-import { useJumpSystem } from "../systems/useJumpSystem";
-import { useVelocitySystem } from "../systems/useVelocitySystem";
+import { useVelocityComponent } from "../components/VelocityComponent";
+import { useDimensionsComponent } from "../components/DimensionsComponent";
+import { useDirectionsComponent } from "../components/DirectionsComponent";
+import { useKeyboardSystem } from "../systems/KeyboardSystem";
+import { useJumpSystem } from "../systems/JumpSystem";
+import { useVelocitySystem } from "../systems/VelocitySystem";
 import { FLOOR_LEVEL, HEIGHT } from "../constants";
-import { usePositionComponent } from "../components/usePositionComponent";
+import { usePositionComponent } from "../components/PositionComponent";
 
 type Props = {
   startX: number;

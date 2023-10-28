@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDirectionsComponent } from "../components/useDirectionsComponent";
+import { useDirectionsComponent } from "../components/DirectionsComponent";
 
 export const useKeyboardSystem = (
   components: ReturnType<typeof useDirectionsComponent>

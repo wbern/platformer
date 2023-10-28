@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useVelocitySystem } from "./useVelocitySystem";
-import { DirectionsComponent } from "../components/useDirectionsComponent";
+import { useVelocitySystem } from "./VelocitySystem";
+import { DirectionsComponent } from "../components/DirectionsComponent";
 
 export const useJumpSystem = (
   components: DirectionsComponent,
