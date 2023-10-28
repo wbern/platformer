@@ -3,7 +3,7 @@ import { BlurFilter } from "pixi.js";
 import { Stage, Container, Sprite, Text, useTick } from "@pixi/react";
 import { use, useEffect, useMemo, useState } from "react";
 import Grid from "./Grid";
-import { Bunny } from "./Bunny";
+import { Bunny } from "./entities/Bunny";
 import { GRID_SIZE } from "./constants";
 import { snapSingleCoordToGrid } from "./utils";
 

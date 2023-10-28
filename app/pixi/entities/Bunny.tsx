@@ -1,14 +1,12 @@
 import { Stage, Sprite, Container, useTick } from "@pixi/react";
 import { useState, useEffect, useRef } from "react";
-import {
-  useVelocitySystem,
-  useVelocityBaseComponent,
-  useDirectionsComponent,
-  useKeyboardSystem,
-  useJumpSystem,
-  useDimensionsComponent,
-} from "./Bunny.hooks";
-import { FLOOR_LEVEL, HEIGHT } from "./constants";
+import { useVelocityComponent } from "../components/useVelocityComponent";
+import { useDimensionsComponent } from "../components/useDimensionsComponent";
+import { useDirectionsComponent } from "../components/useDirectionsComponent";
+import { useKeyboardSystem } from "../systems/useKeyboardSystem";
+import { useJumpSystem } from "../systems/useJumpSystem";
+import { useVelocitySystem } from "../systems/useVelocitySystem";
+import { FLOOR_LEVEL, HEIGHT } from "../constants";
 
 type Props = {
   startX: number;
@@ -23,7 +21,7 @@ export const Bunny = ({ startX, startY }: Props) => {
       width: 16,
       height: 22.5,
     }),
-    ...useVelocityBaseComponent(startX, startY),
+    ...useVelocityComponent(startX, startY),
     ...useDirectionsComponent(),
   };
 
