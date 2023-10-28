@@ -2,7 +2,7 @@ import { useTick } from "@pixi/react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 export const useVelocitySystem = (
-  components: VelocityBaseComponent & DirectionsComponent,
+  components: VelocityBaseComponent & DirectionsComponent & DimensionsComponent,
   stopLevel: number,
   initialVelocity = { x: 0.0, y: 0.1 },
   jumpVelocity = -10
@@ -11,6 +11,14 @@ export const useVelocitySystem = (
   const jumpActivated = useRef(false);
 
   useTick(() => {
+    // console.log("Y", components.velocity.positionY);
+    if (
+      components.velocity.positionY > 200 &&
+      components.velocity.positionY < 210
+    ) {
+      debugger;
+    }
+
     if (components.velocity) {
       if (jumpActivated.current) {
         setIsGrounded(false);
@@ -18,7 +26,8 @@ export const useVelocitySystem = (
         components.velocity.setVelocityY(jumpVelocity);
       } else if (
         components.velocity.velocityY < 0 ||
-        components.velocity.positionY < stopLevel
+        components.velocity.positionY <
+          stopLevel - components.dimensions.topOffset
       ) {
         setIsGrounded(false);
         components.velocity.setVelocityY((prev) => {
@@ -53,14 +62,13 @@ export const useVelocitySystem = (
             return newVelocity;
           }
           return prev;
-          // let res = Math.max(
-          //   Math.min(newVelocity, terminalVelocity),
-          //   initialVelocity
-          // );
-          // return res;
         });
       } else {
         setIsGrounded(true);
+
+        components.velocity.setPositionY(
+          stopLevel - components.dimensions.topOffset
+        );
         components.velocity.setVelocityY(0);
       }
     }
@@ -155,6 +163,33 @@ type KeyState = {
   left: boolean;
   right: boolean;
   space: boolean; // Adding space key to our key state
+};
+
+export type DimensionsComponent = {
+  dimensions: {
+    width: number;
+    height: number;
+    leftOffset: number;
+    topOffset: number;
+  };
+};
+
+export const useDimensionsComponent = (
+  dimensionsInput: Partial<DimensionsComponent["dimensions"]>
+): DimensionsComponent => {
+  const defaults = {
+    width: 32,
+    height: 32,
+  };
+
+  return {
+    dimensions: {
+      leftOffset: (dimensionsInput?.width ?? defaults.width) / 2,
+      topOffset: (dimensionsInput?.height ?? defaults.height) / 2,
+      ...defaults,
+      ...dimensionsInput,
+    },
+  };
 };
 
 export type DirectionsComponent = {

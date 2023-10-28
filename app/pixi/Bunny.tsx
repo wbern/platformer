@@ -6,6 +6,7 @@ import {
   useDirectionsComponent,
   useKeyboardSystem,
   useJumpSystem,
+  useDimensionsComponent,
 } from "./Bunny.hooks";
 import { FLOOR_LEVEL, HEIGHT } from "./constants";
 
@@ -16,13 +17,12 @@ type Props = {
 
 const image = "https://pixijs.io/pixi-react/img/bunny.png";
 
-const width = 16;
-const height = 22.5;
-const leftOffset = 15.5;
-const topOffset = 1;
-
 export const Bunny = ({ startX, startY }: Props) => {
   const components = {
+    ...useDimensionsComponent({
+      width: 16,
+      height: 22.5,
+    }),
     ...useVelocityBaseComponent(startX, startY),
     ...useDirectionsComponent(),
   };
@@ -37,11 +37,11 @@ export const Bunny = ({ startX, startY }: Props) => {
   return (
     <Sprite
       image={image}
-      width={width}
-      height={height}
+      width={components.dimensions.width}
+      height={components.dimensions.height}
       anchor={0.5}
-      x={components.velocity.positionX + leftOffset}
-      y={components.velocity.positionY + topOffset}
+      x={components.velocity.positionX}
+      y={components.velocity.positionY}
     />
   );
 };
