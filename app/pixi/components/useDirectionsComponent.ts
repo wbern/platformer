@@ -1,6 +1,4 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { KeyState } from "./useVelocityComponent";
-
 
 export type DirectionsComponent = {
   directions: {
@@ -9,6 +7,12 @@ export type DirectionsComponent = {
     speedX: number;
     JUMP_VELOCITY: number;
   };
+};
+
+type KeyState = {
+  left: boolean;
+  right: boolean;
+  space: boolean; // Adding space key to our key state
 };
 
 export const useDirectionsComponent = (): DirectionsComponent => {

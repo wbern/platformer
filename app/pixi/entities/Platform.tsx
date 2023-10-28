@@ -14,28 +14,19 @@ type Props = {
   startY: number;
 };
 
-const image = "https://pixijs.io/pixi-react/img/bunny.png";
-
-export const Bunny = ({ startX, startY }: Props) => {
+export const Platform = ({ startX, startY }: Props) => {
   const components = {
     ...useDimensionsComponent({
       width: 16,
       height: 22.5,
     }),
     ...usePositionComponent(startX, startY),
-    ...useVelocityComponent(),
     ...useDirectionsComponent(),
   };
 
-  useKeyboardSystem(components);
-
-  const velocitySystem = useVelocitySystem(components, HEIGHT);
-
-  useJumpSystem(components, velocitySystem);
-
   return (
     <Sprite
-      image={image}
+      image={"/platform.png"}
       width={components.dimensions.width}
       height={components.dimensions.height}
       anchor={0.5}

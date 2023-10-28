@@ -6,6 +6,7 @@ import Grid from "./Grid";
 import { Bunny } from "./entities/Bunny";
 import { GRID_SIZE } from "./constants";
 import { snapSingleCoordToGrid } from "./utils";
+import { Platform } from "./entities/Platform";
 
 export const Pixi = () => {
   const width = 416;
@@ -21,6 +22,8 @@ export const Pixi = () => {
   return (
     show && (
       <Stage
+        //  the random key helps redraw the grid on hot reload
+        key={Math.random()}
         options={{
           backgroundColor: 0xffffff,
         }}
@@ -39,6 +42,7 @@ export const Pixi = () => {
             startX={0}
             startY={snapSingleCoordToGrid(GRID_SIZE, height - GRID_SIZE * 2)}
           />
+          <Platform startX={50} startY={50} />
           {/* <Sprite
             image="https://pixijs.io/pixi-react/img/bunny.png"
             width={16}

@@ -1,10 +1,15 @@
 import { useTick } from "@pixi/react";
 import { useRef, useState } from "react";
-import { VelocityBaseComponent, DirectionsComponent, DimensionsComponent } from "./Bunny.hooks";
-
+import { DimensionsComponent } from "../components/useDimensionsComponent";
+import { DirectionsComponent } from "../components/useDirectionsComponent";
+import { VelocityComponent } from "../components/useVelocityComponent";
+import { PositionComponent } from "../components/usePositionComponent";
 
 export const useVelocitySystem = (
-  components: VelocityBaseComponent & DirectionsComponent & DimensionsComponent,
+  components: VelocityComponent &
+    DirectionsComponent &
+    DimensionsComponent &
+    PositionComponent,
   stopLevel: number,
   initialVelocity = { x: 0, y: 0.1 },
   jumpVelocity = -10
@@ -13,20 +18,16 @@ export const useVelocitySystem = (
   const jumpActivated = useRef(false);
 
   useTick(() => {
-    // console.log("Y", components.velocity.positionY);
-    if (components.velocity.positionY > 200 &&
-      components.velocity.positionY < 210) {
-      debugger;
-    }
-
     if (components.velocity) {
       if (jumpActivated.current) {
         setIsGrounded(false);
         jumpActivated.current = false;
         components.velocity.setVelocityY(jumpVelocity);
-      } else if (components.velocity.velocityY < 0 ||
-        components.velocity.positionY <
-        stopLevel - components.dimensions.topOffset) {
+      } else if (
+        components.velocity.velocityY < 0 ||
+        components.position.positionY <
+          stopLevel - components.dimensions.topOffset
+      ) {
         setIsGrounded(false);
         components.velocity.setVelocityY((prev) => {
           if (components.velocity) {
@@ -37,20 +38,20 @@ export const useVelocitySystem = (
               newVelocity =
                 prev +
                 (components.velocity.accelerationFactor / 4) *
-                Math.pow(
-                  Math.abs(prev),
-                  components.velocity.accelerationExponent
-                );
+                  Math.pow(
+                    Math.abs(prev),
+                    components.velocity.accelerationExponent
+                  );
             } else {
               // character is moving downwards or is stationary, normal acceleration
               newVelocity = Math.max(
                 Math.min(
                   prev +
-                  components.velocity.accelerationFactor *
-                  Math.pow(
-                    Math.abs(prev),
-                    components.velocity.accelerationExponent
-                  ),
+                    components.velocity.accelerationFactor *
+                      Math.pow(
+                        Math.abs(prev),
+                        components.velocity.accelerationExponent
+                      ),
                   components.velocity.terminalVelocity
                 ),
                 initialVelocity.y
@@ -64,7 +65,7 @@ export const useVelocitySystem = (
       } else {
         setIsGrounded(true);
 
-        components.velocity.setPositionY(
+        components.position.setPositionY(
           stopLevel - components.dimensions.topOffset
         );
         components.velocity.setVelocityY(0);
@@ -73,7 +74,7 @@ export const useVelocitySystem = (
 
     // do the movement
     if (components.directions && components.velocity) {
-      components.velocity.setPositionX((x) => {
+      components.position.setPositionX((x) => {
         if (components.directions && components.velocity) {
           let newX = x + components.velocity.velocityX;
           if (components.directions.directionsInput.right) {
@@ -90,7 +91,7 @@ export const useVelocitySystem = (
     }
 
     if (components.velocity) {
-      components.velocity.setPositionY((y) => {
+      components.position.setPositionY((y) => {
         let newY = y + components.velocity.velocityY;
         return newY;
       });

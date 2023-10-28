@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useVelocitySystem } from "./useVelocitySystem";
 import { DirectionsComponent } from "../components/useDirectionsComponent";
 
-
 export const useJumpSystem = (
   components: DirectionsComponent,
   coupledAndUglyVelocitySystem: ReturnType<typeof useVelocitySystem>
@@ -10,16 +9,20 @@ export const useJumpSystem = (
   const jumping = useRef(false);
 
   useEffect(() => {
-    if (components.directions.directionsInput.space &&
+    if (
+      components.directions.directionsInput.space &&
       coupledAndUglyVelocitySystem.isGrounded &&
-      !jumping.current) {
+      !jumping.current
+    ) {
       jumping.current = true;
       coupledAndUglyVelocitySystem.jump();
     }
 
-    if (!components.directions.directionsInput.space &&
+    if (
+      !components.directions.directionsInput.space &&
       jumping.current &&
-      coupledAndUglyVelocitySystem.isGrounded) {
+      coupledAndUglyVelocitySystem.isGrounded
+    ) {
       jumping.current = false;
     }
   }, [
