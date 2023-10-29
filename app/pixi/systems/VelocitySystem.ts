@@ -89,7 +89,9 @@ export const useVelocitySystem = (
         const overlappingEntity = getSolidEntityOverlap();
 
         if (overlappingEntity) {
-          stopMovement(overlappingEntity.boundingRect.top);
+          stopMovement(
+            overlappingEntity.boundingRect.top - components.dimensions.topOffset
+          );
         }
       } else if (
         components.velocity.velocityY < 0 ||
