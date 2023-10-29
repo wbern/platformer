@@ -1,4 +1,3 @@
-
 export type DimensionsComponent = {
   dimensions: {
     width: number;
@@ -11,15 +10,23 @@ export type DimensionsComponent = {
 export const useDimensionsComponent = (
   dimensionsInput: Partial<DimensionsComponent["dimensions"]>
 ): DimensionsComponent => {
-  const defaults = {
+  let sizeDefaults = {
     width: 32,
     height: 32,
   };
 
+  let offsetDefaults = {
+    leftOffset: (dimensionsInput?.width ?? sizeDefaults.width) / 2,
+    topOffset: (dimensionsInput?.height ?? sizeDefaults.height) / 2,
+  };
+
+  const defaults: DimensionsComponent["dimensions"] = {
+    ...sizeDefaults,
+    ...offsetDefaults,
+  };
+
   return {
     dimensions: {
-      leftOffset: (dimensionsInput?.width ?? defaults.width) / 2,
-      topOffset: (dimensionsInput?.height ?? defaults.height) / 2,
       ...defaults,
       ...dimensionsInput,
     },

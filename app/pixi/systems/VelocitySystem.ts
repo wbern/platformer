@@ -23,11 +23,11 @@ export const useVelocitySystem = (
   const [isGrounded, setIsGrounded] = useState(true);
   const jumpActivated = useRef(false);
 
-  const stopMovement = () => {
+  const stopMovement = (yToStopAt: number) => {
     setIsGrounded(true);
 
     components.position.setPositionY(
-      stopLevel - components.dimensions.topOffset
+      yToStopAt - components.dimensions.topOffset
     );
     components.velocity.setVelocityY(0);
   };
@@ -36,47 +36,46 @@ export const useVelocitySystem = (
     components: SolidityComponent & PositionComponent & DimensionsComponent;
   };
 
-  const checkSolidEntityOverlap = () => {
+  const getBoundingRect = (
+    components: PositionComponent & DimensionsComponent
+  ) => ({
+    left: components.position.positionX - components.dimensions.leftOffset,
+    right: components.position.positionX + components.dimensions.leftOffset,
+    top: components.position.positionY - components.dimensions.topOffset,
+    bottom: components.position.positionY + components.dimensions.topOffset,
+  });
+
+  const getSolidEntityOverlap = () => {
     const solidEntities = registry.filter(
       (entity): entity is SolidEntity =>
         entity.components.solidity?.solid !== undefined &&
         entity.components.position !== undefined &&
         entity.components.dimensions !== undefined &&
-        entityInfo.id !== entityInfo.id
+        entityInfo.id !== entity.id
     );
 
-    const currentEntityBox = {
-      left: components.position.positionX - components.dimensions.leftOffset,
-      right: components.position.positionX + components.dimensions.leftOffset,
-      top: components.position.positionY - components.dimensions.topOffset,
-      bottom: components.position.positionY + components.dimensions.topOffset,
-    };
+    const ownEntityBox = getBoundingRect(components);
 
-    const hasOverlap = solidEntities.some((entity) => {
-      const entityBox = {
-        left:
-          entity.components.position.positionX -
-          entity.components.dimensions.leftOffset,
-        right:
-          entity.components.position.positionX +
-          entity.components.dimensions.leftOffset,
-        top:
-          entity.components.position.positionY -
-          entity.components.dimensions.topOffset,
-        bottom:
-          entity.components.position.positionY +
-          entity.components.dimensions.topOffset,
-      };
+    const overlappingEntity = solidEntities.find((entity) => {
+      const entityBox = getBoundingRect(entity.components);
 
       return (
-        currentEntityBox.left < entityBox.right &&
-        currentEntityBox.right > entityBox.left &&
-        currentEntityBox.top < entityBox.bottom &&
-        currentEntityBox.bottom > entityBox.top
+        ownEntityBox.left < entityBox.right &&
+        ownEntityBox.right > entityBox.left &&
+        ownEntityBox.top < entityBox.bottom &&
+        ownEntityBox.bottom > entityBox.top
       );
     });
 
-    return hasOverlap;
+    if (!overlappingEntity) {
+      return null;
+    }
+
+    return {
+      entity: overlappingEntity,
+      ownBoundingRect: ownEntityBox,
+      boundingRect: getBoundingRect(overlappingEntity.components),
+    };
   };
 
   useTick(() => {
@@ -86,9 +85,12 @@ export const useVelocitySystem = (
         setIsGrounded(false);
         jumpActivated.current = false;
         components.velocity.setVelocityY(jumpVelocity);
-      } else if (checkSolidEntityOverlap()) {
-        console.log("stop!");
-        stopMovement();
+      } else if (getSolidEntityOverlap()) {
+        const overlappingEntity = getSolidEntityOverlap();
+
+        if (overlappingEntity) {
+          stopMovement(overlappingEntity.boundingRect.top);
+        }
       } else if (
         components.velocity.velocityY < 0 ||
         components.position.positionY <
@@ -130,7 +132,7 @@ export const useVelocitySystem = (
           return prev;
         });
       } else {
-        stopMovement();
+        stopMovement(stopLevel);
       }
     }
 
