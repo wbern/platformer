@@ -8,6 +8,9 @@ import { useJumpSystem } from "../systems/JumpSystem";
 import { useVelocitySystem } from "../systems/VelocitySystem";
 import { FLOOR_LEVEL, HEIGHT } from "../constants";
 import { usePositionComponent } from "../components/PositionComponent";
+import { useRegisterEntity } from "../providers/EntityRegistry";
+import { useSolidityComponent } from "../components/SolidityComponent";
+import { useEntityInfo } from "../utils/useEntityInfo";
 
 type Props = {
   startX: number;
@@ -17,7 +20,10 @@ type Props = {
 const image = "https://pixijs.io/pixi-react/img/bunny.png";
 
 export const Bunny = ({ startX, startY }: Props) => {
+  const entityInfo = useEntityInfo("bunny");
+
   const components = {
+    ...useSolidityComponent(),
     ...useDimensionsComponent({
       width: 16,
       height: 22.5,
@@ -27,11 +33,11 @@ export const Bunny = ({ startX, startY }: Props) => {
     ...useDirectionsComponent(),
   };
 
-  useKeyboardSystem(components);
+  useRegisterEntity(entityInfo, components);
 
-  const velocitySystem = useVelocitySystem(components, HEIGHT);
-
-  useJumpSystem(components, velocitySystem);
+  useKeyboardSystem(entityInfo, components);
+  const velocitySystem = useVelocitySystem(entityInfo, components, HEIGHT);
+  useJumpSystem(entityInfo, components, velocitySystem);
 
   return (
     <Sprite

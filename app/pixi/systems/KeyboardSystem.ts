@@ -1,8 +1,13 @@
 import { useEffect } from "react";
-import { useDirectionsComponent } from "../components/DirectionsComponent";
+import {
+  DirectionsComponent,
+  useDirectionsComponent,
+} from "../components/DirectionsComponent";
+import { EntityInfo } from "../utils/useEntityInfo";
 
 export const useKeyboardSystem = (
-  components: ReturnType<typeof useDirectionsComponent>
+  entityInfo: EntityInfo,
+  components: DirectionsComponent
 ): void => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

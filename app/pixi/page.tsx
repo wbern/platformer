@@ -7,6 +7,7 @@ import { Bunny } from "./entities/Bunny";
 import { GRID_SIZE } from "./constants";
 import { snapSingleCoordToGrid } from "./utils";
 import { Platform } from "./entities/Platform";
+import { EntityRegistryProvider } from "./providers/EntityRegistry";
 
 export const Pixi = () => {
   const width = 416;
@@ -37,16 +38,18 @@ export const Pixi = () => {
           height={height}
           pitch={{ x: GRID_SIZE, y: GRID_SIZE }}
         />
-        <Container>
-          <Bunny
-            startX={0}
-            startY={snapSingleCoordToGrid(GRID_SIZE, height - GRID_SIZE * 2)}
-          />
-          <Platform
-            startX={50}
-            startY={snapSingleCoordToGrid(GRID_SIZE, height)}
-          />
-        </Container>
+        <EntityRegistryProvider>
+          <Container>
+            <Bunny
+              startX={0}
+              startY={snapSingleCoordToGrid(GRID_SIZE, height - GRID_SIZE * 2)}
+            />
+            <Platform
+              startX={100}
+              startY={snapSingleCoordToGrid(GRID_SIZE, height)}
+            />
+          </Container>
+        </EntityRegistryProvider>
       </Stage>
     )
   );

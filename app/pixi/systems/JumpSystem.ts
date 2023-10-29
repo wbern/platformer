@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useVelocitySystem } from "./VelocitySystem";
 import { DirectionsComponent } from "../components/DirectionsComponent";
+import { EntityInfo } from "../utils/useEntityInfo";
 
 export const useJumpSystem = (
+  entityInfo: EntityInfo,
   components: DirectionsComponent,
   coupledAndUglyVelocitySystem: ReturnType<typeof useVelocitySystem>
 ) => {

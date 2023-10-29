@@ -8,6 +8,9 @@ import { useJumpSystem } from "../systems/JumpSystem";
 import { useVelocitySystem } from "../systems/VelocitySystem";
 import { FLOOR_LEVEL, HEIGHT } from "../constants";
 import { usePositionComponent } from "../components/PositionComponent";
+import { useSolidityComponent } from "../components/SolidityComponent";
+import { useRegisterEntity } from "../providers/EntityRegistry";
+import { useEntityInfo } from "../utils/useEntityInfo";
 
 type Props = {
   startX: number;
@@ -15,14 +18,19 @@ type Props = {
 };
 
 export const Platform = ({ startX, startY }: Props) => {
+  const entityInfo = useEntityInfo("platform");
+
   const components = {
     ...useDimensionsComponent({
-      width: 16,
-      height: 22.5,
+      width: 64,
+      height: 24,
     }),
     ...usePositionComponent(startX, startY),
     ...useDirectionsComponent(),
+    ...useSolidityComponent(),
   };
+
+  useRegisterEntity(entityInfo, components);
 
   return (
     <Sprite
