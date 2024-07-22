@@ -4,15 +4,13 @@ import { Stage, Container, Sprite, Text, useTick } from "@pixi/react";
 import { use, useEffect, useMemo, useState } from "react";
 import Grid from "./Grid";
 import { Bunny } from "./entities/Bunny";
-import { GRID_SIZE } from "./constants";
+import { GRID_SIZE, HEIGHT, WIDTH } from "./constants";
 import { snapSingleCoordToGrid } from "./utils";
 import { Platform } from "./entities/Platform";
 import { EntityRegistryProvider } from "./providers/EntityRegistry";
+import { Background } from "./entities/Background";
 
 export const Pixi = () => {
-  const width = 416;
-  const height = 224;
-
   const [show, setShow] = useState(false);
   const blurFilter = useMemo(() => new BlurFilter(4), []);
 
@@ -26,27 +24,30 @@ export const Pixi = () => {
         //  the random key helps redraw the grid on hot reload
         key={Math.random()}
         options={{
-          backgroundColor: 0xffffff,
+          // backgroundColor: 0xffffff,
+          backgroundColor: 0xccccff,
         }}
-        width={width}
-        height={height}
+        width={WIDTH}
+        height={HEIGHT}
       >
         <Grid
+          hideGrid
           color={[0.95, 0.95, 0.95]}
           lineThickness={1}
-          width={width}
-          height={height}
+          width={WIDTH}
+          height={HEIGHT}
           pitch={{ x: GRID_SIZE, y: GRID_SIZE }}
         />
         <EntityRegistryProvider>
           <Container>
+            <Background />
             <Bunny
-              startX={0}
-              startY={snapSingleCoordToGrid(GRID_SIZE, height - GRID_SIZE * 2)}
+              startX={snapSingleCoordToGrid(GRID_SIZE, WIDTH / 2)}
+              startY={snapSingleCoordToGrid(GRID_SIZE, HEIGHT - GRID_SIZE * 2)}
             />
             <Platform
-              startX={100}
-              startY={snapSingleCoordToGrid(GRID_SIZE, height)}
+              startX={GRID_SIZE * 10}
+              startY={snapSingleCoordToGrid(GRID_SIZE, HEIGHT - GRID_SIZE * 2)}
             />
           </Container>
         </EntityRegistryProvider>

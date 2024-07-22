@@ -6,43 +6,33 @@ import { useDirectionsComponent } from "../components/DirectionsComponent";
 import { useKeyboardSystem } from "../systems/KeyboardSystem";
 import { useJumpSystem } from "../systems/JumpSystem";
 import { useVelocitySystem } from "../systems/VelocitySystem";
-import { FLOOR_LEVEL, HEIGHT, SCALE } from "../constants";
+import { FLOOR_LEVEL, HEIGHT, SCALE, WIDTH } from "../constants";
 import { usePositionComponent } from "../components/PositionComponent";
-import { useSolidityComponent } from "../components/SolidityComponent";
 import { useRegisterEntity } from "../providers/EntityRegistry";
+import { useSolidityComponent } from "../components/SolidityComponent";
 import { useEntityInfo } from "../utils/useEntityInfo";
 
-type Props = {
-  startX: number;
-  startY: number;
-};
+const image = "/background.jpg";
 
-export const Platform = ({ startX, startY }: Props) => {
-  const entityInfo = useEntityInfo("platform");
-
-  const dimensionsComponent = useDimensionsComponent({
-    width: 32 * SCALE,
-    height: 8 * SCALE,
-  });
+export const Background = () => {
+  const entityInfo = useEntityInfo("bunny");
 
   const components = {
-    ...dimensionsComponent,
-    ...usePositionComponent(
-      startX - dimensionsComponent.dimensions.leftOffset,
-      startY - dimensionsComponent.dimensions.topOffset
-    ),
-    ...useDirectionsComponent(),
-    ...useSolidityComponent(),
+    ...useDimensionsComponent({
+      width: WIDTH,
+      height: HEIGHT,
+    }),
+    ...usePositionComponent(0, 0),
   };
 
   useRegisterEntity(entityInfo, components);
 
   return (
     <Sprite
-      image={"/platform.png"}
+      image={image}
       width={components.dimensions.width}
       height={components.dimensions.height}
-      anchor={0.5}
+      anchor={0}
       x={components.position.positionX}
       y={components.position.positionY}
     />

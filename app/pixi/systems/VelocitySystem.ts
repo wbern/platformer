@@ -60,10 +60,10 @@ export const useVelocitySystem = (
       const entityBox = getBoundingRect(entity.components);
 
       return (
-        ownEntityBox.left < entityBox.right &&
-        ownEntityBox.right > entityBox.left &&
-        ownEntityBox.top < entityBox.bottom &&
-        ownEntityBox.bottom > entityBox.top
+        ownEntityBox.left + components.velocity.velocityX <= entityBox.right &&
+        ownEntityBox.right + components.velocity.velocityX >= entityBox.left &&
+        ownEntityBox.top + components.velocity.velocityY < entityBox.bottom &&
+        ownEntityBox.bottom + components.velocity.velocityY >= entityBox.top
       );
     });
 
@@ -87,11 +87,8 @@ export const useVelocitySystem = (
         components.velocity.setVelocityY(jumpVelocity);
       } else if (getSolidEntityOverlap()) {
         const overlappingEntity = getSolidEntityOverlap();
-
         if (overlappingEntity) {
-          stopMovement(
-            overlappingEntity.boundingRect.top - components.dimensions.topOffset
-          );
+          stopMovement(overlappingEntity.boundingRect.top);
         }
       } else if (
         components.velocity.velocityY < 0 ||
@@ -156,7 +153,7 @@ export const useVelocitySystem = (
       });
     }
 
-    if (components.velocity) {
+    if (components.velocity && !isGrounded) {
       components.position.setPositionY((y) => {
         let newY = y + components.velocity.velocityY;
         return newY;

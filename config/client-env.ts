@@ -8,7 +8,7 @@ interface ClientEnvVariables {
 }
 
 const objectSchema = {
-  NEXT_PUBLIC_KEY: joi.string().required(),
+  NEXT_PUBLIC_KEY: joi.string(),
 };
 
 // Next.js requires us to spell out every process.env variable

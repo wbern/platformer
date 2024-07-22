@@ -6,7 +6,7 @@ import { useDirectionsComponent } from "../components/DirectionsComponent";
 import { useKeyboardSystem } from "../systems/KeyboardSystem";
 import { useJumpSystem } from "../systems/JumpSystem";
 import { useVelocitySystem } from "../systems/VelocitySystem";
-import { FLOOR_LEVEL, HEIGHT } from "../constants";
+import { FLOOR_LEVEL, HEIGHT, SCALE } from "../constants";
 import { usePositionComponent } from "../components/PositionComponent";
 import { useRegisterEntity } from "../providers/EntityRegistry";
 import { useSolidityComponent } from "../components/SolidityComponent";
@@ -17,7 +17,7 @@ type Props = {
   startY: number;
 };
 
-const image = "https://pixijs.io/pixi-react/img/bunny.png";
+const image = "/bunny.png";
 
 export const Bunny = ({ startX, startY }: Props) => {
   const entityInfo = useEntityInfo("bunny");
@@ -25,8 +25,8 @@ export const Bunny = ({ startX, startY }: Props) => {
   const components = {
     ...useSolidityComponent(),
     ...useDimensionsComponent({
-      width: 16,
-      height: 22.5,
+      width: 16 * SCALE,
+      height: 22.5 * SCALE,
     }),
     ...usePositionComponent(startX, startY),
     ...useVelocityComponent(),

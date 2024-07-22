@@ -8,8 +8,8 @@ interface ServerEnvVariables {
 
 const validationSchema = joi
   .object<ServerEnvVariables>({
-    MY_SECRET_KEY: joi.string().required(),
-    NEXT_PUBLIC_KEY: joi.string().required(),
+    MY_SECRET_KEY: joi.string(),
+    NEXT_PUBLIC_KEY: joi.string(),
   })
   .unknown(true);
 

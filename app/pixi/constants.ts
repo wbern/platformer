@@ -1,4 +1,6 @@
 export const GRID_SIZE = 16;
-export const WIDTH = 416;
-export const HEIGHT = 224;
+export const WIDTH = GRID_SIZE * 32;
+export const HEIGHT = GRID_SIZE * 16;
 export const FLOOR_LEVEL = HEIGHT;
+
+export const SCALE = 2;

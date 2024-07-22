@@ -8,6 +8,7 @@ interface GridProps {
   color?: [number, number, number];
   lineThickness?: number;
   pitch?: { x: number; y: number };
+  hideGrid?: boolean;
 }
 
 const shaderCode = `
@@ -37,7 +38,14 @@ const shaderCode = `
   }
 `;
 
-const Grid = ({ width, height, color, lineThickness, pitch }: GridProps) => {
+const Grid = ({
+  width,
+  height,
+  color,
+  lineThickness,
+  pitch,
+  hideGrid,
+}: GridProps) => {
   const uniforms = {
     thickness: lineThickness,
     color: [...color!, 1.0],
@@ -47,14 +55,21 @@ const Grid = ({ width, height, color, lineThickness, pitch }: GridProps) => {
     pitch: [pitch!.x * 2, pitch!.y * 2],
   };
 
-  const draw = useCallback((g: PIXI.Graphics) => {
-    const gridShader = new PIXI.Filter(undefined, shaderCode, uniforms);
-    g.clear();
-    g.beginFill([255, 255, 255])
-    g.drawRect(0, 0, width, height);
-    g.endFill();
-    g.filters = [gridShader];
-  }, []);
+  const draw = useCallback(
+    (g: PIXI.Graphics) => {
+      if (hideGrid) {
+        return;
+      }
+
+      const gridShader = new PIXI.Filter(undefined, shaderCode, uniforms);
+      g.clear();
+      g.beginFill([255, 255, 255]);
+      g.drawRect(0, 0, width, height);
+      g.endFill();
+      g.filters = [gridShader];
+    },
+    [hideGrid]
+  );
 
   return <Graphics draw={draw} />;
 };
