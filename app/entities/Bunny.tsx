@@ -11,6 +11,7 @@ import { usePositionComponent } from "../components/PositionComponent";
 import { useRegisterEntity } from "../providers/EntityRegistry";
 import { useSolidityComponent } from "../components/SolidityComponent";
 import { useEntityInfo } from "../utils/useEntityInfo";
+import { useTouchSystem } from "../systems/TouchSystem";
 
 type Props = {
   startX: number;
@@ -35,7 +36,8 @@ export const Bunny = ({ startX, startY }: Props) => {
 
   useRegisterEntity(entityInfo, components);
 
-  useKeyboardSystem(entityInfo, components);
+  // useKeyboardSystem(entityInfo, components);
+  useTouchSystem(entityInfo, components);
   const velocitySystem = useVelocitySystem(entityInfo, components, HEIGHT);
   useJumpSystem(entityInfo, components, velocitySystem);
 
