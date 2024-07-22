@@ -10,9 +10,9 @@ import { Platform } from "./entities/Platform";
 import { EntityRegistryProvider } from "./providers/EntityRegistry";
 import { Background } from "./entities/Background";
 
-export const Pixi = () => {
+const Pixi = () => {
   const [show, setShow] = useState(false);
-  const blurFilter = useMemo(() => new BlurFilter(4), []);
+  const blurFilter = useMemo(() => show ? new BlurFilter(4) : null, [show]);
 
   useEffect(() => {
     setShow(true);
