@@ -12,6 +12,7 @@ export const useTouchSystem = (
 
   useEffect(() => {
     const handleTouchStart = (event: TouchEvent) => {
+      event.preventDefault();
       moveEvents.current = [];
 
       const touch = event.touches[0];
@@ -33,6 +34,7 @@ export const useTouchSystem = (
     };
 
     const handleTouchMove = (event: TouchEvent) => {
+      event.preventDefault();
       const touch = event.touches[0];
       const screenWidth = window.innerWidth;
       const time = new Date().getTime();
@@ -77,7 +79,8 @@ export const useTouchSystem = (
       }
     };
 
-    const handleTouchEnd = () => {
+    const handleTouchEnd = (event: any) => {
+      event.preventDefault();
       moveEvents.current = [];
 
       components.directions.setDirectionsInput((prev) => ({
