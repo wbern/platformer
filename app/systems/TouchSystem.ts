@@ -1,18 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { DirectionsComponent } from "../components/DirectionsComponent";
 
-export const useTouchSystem = (e: unknown, components: DirectionsComponent): void => {
+const deltaTimeRequirement = 100;
+const deltaSwipeRequirement = 30;
+
+export const useTouchSystem = (
+  e: unknown,
+  components: DirectionsComponent
+): void => {
+  const moveEvents = useRef<{ time: number; touch: Touch }[]>([]);
+
   useEffect(() => {
-    let startX = 0;
-    let startY = 0;
-    let startTime = 0;
-
     const handleTouchStart = (event: TouchEvent) => {
-      const touch = event.touches[0];
-      startX = touch.clientX;
-      startY = touch.clientY;
-      startTime = new Date().getTime();
+      moveEvents.current = [];
 
+      const touch = event.touches[0];
       const screenWidth = window.innerWidth;
 
       if (touch.clientX < screenWidth / 2) {
@@ -33,6 +35,9 @@ export const useTouchSystem = (e: unknown, components: DirectionsComponent): voi
     const handleTouchMove = (event: TouchEvent) => {
       const touch = event.touches[0];
       const screenWidth = window.innerWidth;
+      const time = new Date().getTime();
+
+      moveEvents.current.push({ touch, time });
 
       if (touch.clientX < screenWidth / 2) {
         components.directions.setDirectionsInput((prev) => ({
@@ -48,33 +53,38 @@ export const useTouchSystem = (e: unknown, components: DirectionsComponent): voi
         }));
       }
 
-      const deltaX = touch.clientX - startX;
-      const deltaY = touch.clientY - startY;
-      const deltaTime = new Date().getTime() - startTime;
+      const lastWithinDelta = moveEvents.current?.find(
+        (event) => time - event.time > deltaTimeRequirement
+      );
 
-      const isQuickSwipeUp = Math.abs(deltaY) > 50 && deltaTime < 300;
+      const deltaY =
+        (lastWithinDelta?.touch?.clientY ?? touch.clientY) - touch.clientY;
+
+      const isQuickSwipeUp = Math.abs(deltaY) > deltaSwipeRequirement;
 
       if (isQuickSwipeUp) {
+        moveEvents.current = [];
+
         components.directions.setDirectionsInput((prev) => ({
           ...prev,
           space: true,
         }));
-        
-        // Reset the jump after a short delay to simulate a jump action
-        setTimeout(() => {
-          components.directions.setDirectionsInput((prev) => ({
-            ...prev,
-            space: false,
-          }));
-        }, 100);
+      } else if (components.directions.directionsInput.space) {
+        components.directions.setDirectionsInput((prev) => ({
+          ...prev,
+          space: false,
+        }));
       }
     };
 
     const handleTouchEnd = () => {
+      moveEvents.current = [];
+
       components.directions.setDirectionsInput((prev) => ({
         ...prev,
         left: false,
         right: false,
+        space: false,
       }));
     };
 
