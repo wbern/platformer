@@ -38,7 +38,7 @@ export const Bunny = ({ startX, startY }: Props) => {
 
   useKeyboardSystem(entityInfo, components);
   useTouchSystem(entityInfo, components);
-  const velocitySystem = useVelocitySystem(entityInfo, components, HEIGHT);
+  const velocitySystem = useVelocitySystem(entityInfo, components, HEIGHT, undefined, -15);
   useJumpSystem(entityInfo, components, velocitySystem);
 
   return (

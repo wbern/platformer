@@ -5,8 +5,8 @@ export type EntityInfo = {
   id: string;
 };
 
-export const useEntityInfo = (name: string) => {
-  const id = useRef(generateUniqueId(name)).current;
+export const useEntityInfo = (name: string, existingId?: string) => {
+  const id = useRef(existingId ?? generateUniqueId(name)).current;
 
   return {
     id,

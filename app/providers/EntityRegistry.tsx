@@ -5,6 +5,7 @@ import {
   createContext,
   FC,
   useState,
+  MutableRefObject,
 } from "react";
 import { generateUniqueId } from "../utils/generateUniqueId";
 import { DimensionsComponent } from "../components/DimensionsComponent";
@@ -22,24 +23,22 @@ type PossibleComponents = Partial<
     VelocityComponent
 >;
 
-type Entity = EntityInfo & {
+export type Entity = EntityInfo & {
   components: PossibleComponents;
 };
 
 const ComponentRegistryContext = createContext<{
-  registry: Array<Entity>;
-  setRegistry: React.Dispatch<React.SetStateAction<Array<Entity>>>;
+  registry: MutableRefObject<Array<Entity>>;
 }>({
-  registry: [],
-  setRegistry: () => {},
+  registry: { current: [] },
 });
 
 export const EntityRegistryProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [registry, setRegistry] = useState<Array<Entity>>([]);
+  const registry = useRef<Array<Entity>>([]);
   return (
-    <ComponentRegistryContext.Provider value={{ registry, setRegistry }}>
+    <ComponentRegistryContext.Provider value={{ registry }}>
       {children}
     </ComponentRegistryContext.Provider>
   );
@@ -49,20 +48,13 @@ export function useRegisterEntity(
   entityInfo: EntityInfo,
   components: PossibleComponents
 ) {
-  const { setRegistry } = useContext(ComponentRegistryContext);
+  const { registry } = useContext(ComponentRegistryContext);
 
-  useEffect(() => {
-    const componentInstance = { ...entityInfo, components };
-    setRegistry((prevRegistry) => [...prevRegistry, componentInstance]);
+  if (registry.current.some((entity) => entity.id === entityInfo.id)) {
+    return;
+  }
 
-    return () => {
-      setRegistry((prevRegistry) =>
-        prevRegistry.filter((comp) => comp.id !== entityInfo.id)
-      );
-    };
-    // don't subscribe to updates to components and entityInfo, it causes a lot of lag
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setRegistry]);
+  registry.current.push({ ...entityInfo, components });
 }
 
 export function useRegisteredEntities() {
@@ -70,6 +62,17 @@ export function useRegisteredEntities() {
   return {
     registry,
     getEntitiesOfType: (type: string) =>
-      registry.filter((entity) => entity.id.split("-")[0] === type),
+      registry.current.filter((entity) => entity.id.split("-")[0] === type),
+    getSolidEntities: () =>
+      registry.current.filter(
+        (
+          entity
+        ): entity is Entity & {
+          components: Entity["components"] &
+            PositionComponent &
+            SolidityComponent;
+        } =>
+          !!entity.components?.solidity?.solid && !!entity.components?.position
+      ),
   };
 }

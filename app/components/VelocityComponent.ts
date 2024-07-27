@@ -22,7 +22,7 @@ export const useVelocityComponent = (): VelocityComponent => {
       setVelocityX,
       velocityY,
       setVelocityY,
-      terminalVelocity: 2,
+      terminalVelocity: 3,
       accelerationFactor: 0.3,
       accelerationExponent: 1.5,
     },

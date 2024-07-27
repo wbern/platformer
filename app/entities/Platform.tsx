@@ -15,10 +15,11 @@ import { useEntityInfo } from "../utils/useEntityInfo";
 type Props = {
   startX: number;
   startY: number;
+  id?: string;
 };
 
-export const Platform = ({ startX, startY }: Props) => {
-  const entityInfo = useEntityInfo("platform");
+export const Platform = ({ startX, startY, id }: Props) => {
+  const entityInfo = useEntityInfo("platform", id);
 
   const dimensionsComponent = useDimensionsComponent({
     width: 32 * SCALE,

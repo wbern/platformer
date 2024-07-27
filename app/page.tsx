@@ -9,10 +9,11 @@ import { snapSingleCoordToGrid } from "./utils";
 import { Platform } from "./entities/Platform";
 import { EntityRegistryProvider } from "./providers/EntityRegistry";
 import { Background } from "./entities/Background";
+import { Spawner } from "./entities/Spawner";
 
 const Pixi = () => {
   const [show, setShow] = useState(false);
-  const blurFilter = useMemo(() => show ? new BlurFilter(4) : null, [show]);
+  const blurFilter = useMemo(() => (show ? new BlurFilter(4) : null), [show]);
 
   useEffect(() => {
     setShow(true);
@@ -45,9 +46,17 @@ const Pixi = () => {
               startX={snapSingleCoordToGrid(GRID_SIZE, WIDTH / 2)}
               startY={snapSingleCoordToGrid(GRID_SIZE, HEIGHT - GRID_SIZE * 2)}
             />
-            <Platform
+            {/* <Platform
               startX={GRID_SIZE * 10}
               startY={snapSingleCoordToGrid(GRID_SIZE, HEIGHT - GRID_SIZE * 2)}
+            /> */}
+            <Spawner
+              type={Platform as React.ComponentType<unknown>}
+              spawnLimit={20}
+              minDistanceX={70}
+              maxDistanceX={150}
+              minDistanceY={50}
+              maxDistanceY={50}
             />
           </Container>
         </EntityRegistryProvider>

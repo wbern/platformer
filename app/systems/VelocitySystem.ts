@@ -46,7 +46,7 @@ export const useVelocitySystem = (
   });
 
   const getSolidEntityOverlap = () => {
-    const solidEntities = registry.filter(
+    const solidEntities = registry.current.filter(
       (entity): entity is SolidEntity =>
         entity.components.solidity?.solid !== undefined &&
         entity.components.position !== undefined &&
