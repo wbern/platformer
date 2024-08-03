@@ -7,10 +7,12 @@ import { PositionComponent } from "../components/PositionComponent";
 import { SolidityComponent } from "../components/SolidityComponent";
 import { useRegisteredEntities } from "../providers/EntityRegistry";
 import { EntityInfo } from "../utils/useEntityInfo";
+import { CollisionComponent } from "../components/CollisionComponent";
 
 export const useVelocitySystem = (
   entityInfo: EntityInfo,
   components: VelocityComponent &
+    CollisionComponent &
     DirectionsComponent &
     DimensionsComponent &
     PositionComponent &
@@ -19,12 +21,11 @@ export const useVelocitySystem = (
   initialVelocity = { x: 0, y: 0.1 },
   jumpVelocity = -10
 ) => {
-  const { registry, getEntitiesOfType } = useRegisteredEntities();
-  const [isGrounded, setIsGrounded] = useState(true);
   const jumpActivated = useRef(false);
 
   const stopMovement = (yToStopAt: number) => {
-    setIsGrounded(true);
+    console.log("CollisionSystem -> components.collision.setIsGrounded(true);");
+    components.collision.setIsGrounded(true);
 
     components.position.setPositionY(
       yToStopAt - components.dimensions.topOffset
@@ -32,71 +33,15 @@ export const useVelocitySystem = (
     components.velocity.setVelocityY(0);
   };
 
-  type SolidEntity = EntityInfo & {
-    components: SolidityComponent & PositionComponent & DimensionsComponent;
-  };
-
-  const getBoundingRect = (
-    components: PositionComponent & DimensionsComponent
-  ) => ({
-    left: components.position.positionX - components.dimensions.leftOffset,
-    right: components.position.positionX + components.dimensions.leftOffset,
-    top: components.position.positionY - components.dimensions.topOffset,
-    bottom: components.position.positionY + components.dimensions.topOffset,
-  });
-
-  const getSolidEntityOverlap = () => {
-    const solidEntities = registry.current.filter(
-      (entity): entity is SolidEntity =>
-        entity.components.solidity?.solid !== undefined &&
-        entity.components.position !== undefined &&
-        entity.components.dimensions !== undefined &&
-        entityInfo.id !== entity.id
-    );
-
-    const ownEntityBox = getBoundingRect(components);
-
-    const overlappingEntity = solidEntities.find((entity) => {
-      const entityBox = getBoundingRect(entity.components);
-
-      return (
-        ownEntityBox.left + components.velocity.velocityX <= entityBox.right &&
-        ownEntityBox.right + components.velocity.velocityX >= entityBox.left &&
-        ownEntityBox.top + components.velocity.velocityY < entityBox.bottom &&
-        ownEntityBox.bottom + components.velocity.velocityY >= entityBox.top
-      );
-    });
-
-    if (!overlappingEntity) {
-      return null;
-    }
-
-    return {
-      entity: overlappingEntity,
-      ownBoundingRect: ownEntityBox,
-      boundingRect: getBoundingRect(overlappingEntity.components),
-    };
-  };
-
   useTick(() => {
     if (components.velocity) {
-      if (jumpActivated.current) {
-        // character is going up (maybe because of a jump)
-        setIsGrounded(false);
-        jumpActivated.current = false;
-        components.velocity.setVelocityY(jumpVelocity);
-      } else if (getSolidEntityOverlap()) {
-        const overlappingEntity = getSolidEntityOverlap();
-        if (overlappingEntity) {
-          stopMovement(overlappingEntity.boundingRect.top);
-        }
-      } else if (
-        components.velocity.velocityY < 0 ||
-        components.position.positionY <
-          stopLevel - components.dimensions.topOffset
+      if (
+        !components.collision.isGrounded &&
+        (components.velocity.velocityY < 0 ||
+          components.position.positionY <
+            stopLevel - components.dimensions.topOffset)
       ) {
         // character is falling and has not reached ground
-        setIsGrounded(false);
         components.velocity.setVelocityY((prev) => {
           if (components.velocity) {
             let newVelocity;
@@ -130,8 +75,6 @@ export const useVelocitySystem = (
           }
           return prev;
         });
-      } else {
-        stopMovement(stopLevel);
       }
     }
 
@@ -153,7 +96,7 @@ export const useVelocitySystem = (
       });
     }
 
-    if (components.velocity && !isGrounded) {
+    if (components.velocity && !components.collision.isGrounded) {
       components.position.setPositionY((y) => {
         let newY = y + components.velocity.velocityY;
         return newY;
@@ -173,7 +116,6 @@ export const useVelocitySystem = (
   };
 
   return {
-    isGrounded,
     jump,
     move,
   };

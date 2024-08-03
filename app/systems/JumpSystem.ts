@@ -2,33 +2,35 @@ import { useEffect, useRef } from "react";
 import { useVelocitySystem } from "./VelocitySystem";
 import { DirectionsComponent } from "../components/DirectionsComponent";
 import { EntityInfo } from "../utils/useEntityInfo";
+import { JumpComponent } from "../components/JumpComponent";
+import { CollisionComponent } from "../components/CollisionComponent";
+import { VelocityComponent } from "../components/VelocityComponent";
 
 export const useJumpSystem = (
   entityInfo: EntityInfo,
-  components: DirectionsComponent,
+  components: DirectionsComponent &
+    JumpComponent &
+    CollisionComponent &
+    VelocityComponent,
   coupledAndUglyVelocitySystem: ReturnType<typeof useVelocitySystem>
 ) => {
-  const jumping = useRef(false);
-
   useEffect(() => {
     if (
       components.directions.directionsInput.space &&
-      coupledAndUglyVelocitySystem.isGrounded &&
-      !jumping.current
+      components.collision.isGrounded
     ) {
-      jumping.current = true;
-      coupledAndUglyVelocitySystem.jump();
-    }
-
-    if (
-      !components.directions.directionsInput.space &&
-      jumping.current &&
-      coupledAndUglyVelocitySystem.isGrounded
-    ) {
-      jumping.current = false;
+      // TODO: setJumpActivated is not really used here
+      components.jump.setJumpActivated(true);
+      console.log("JumpSystem -> components.collision.setIsGrounded(false)")
+      components.collision.setIsGrounded(false);
+      components.velocity.setVelocityY(-10);
     }
   }, [
-    coupledAndUglyVelocitySystem,
+    components.collision,
+    components.collision.isGrounded,
     components.directions.directionsInput.space,
+    components.jump,
+    components.velocity,
+    coupledAndUglyVelocitySystem,
   ]);
 };

@@ -44,12 +44,12 @@ const Pixi = () => {
             <Background />
             <Bunny
               startX={snapSingleCoordToGrid(GRID_SIZE, WIDTH / 2)}
-              startY={snapSingleCoordToGrid(GRID_SIZE, HEIGHT - GRID_SIZE * 2)}
+              startY={snapSingleCoordToGrid(GRID_SIZE, HEIGHT - GRID_SIZE * 1)}
             />
-            {/* <Platform
-              startX={GRID_SIZE * 10}
-              startY={snapSingleCoordToGrid(GRID_SIZE, HEIGHT - GRID_SIZE * 2)}
-            /> */}
+            <Platform
+              startX={GRID_SIZE * 18}
+              startY={snapSingleCoordToGrid(GRID_SIZE, HEIGHT - GRID_SIZE * 1)}
+            />
             <Spawner
               type={Platform as React.ComponentType<unknown>}
               spawnLimit={20}
