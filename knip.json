@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/main.tsx"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": [],
+  "ignoreDependencies": ["normalize.css"],
+  "ignoreExportsUsedInFile": true,
+  "eslint": {
+    "config": ["eslint.config.js"]
+  },
+  "vite": {
+    "config": ["vite.config.ts"]
+  }
+}
