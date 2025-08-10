@@ -12,7 +12,7 @@ import { Spawner } from "./entities/Spawner";
 
 function App() {
   const [show, setShow] = useState(false);
-  const blurFilter = useMemo(() => (show ? new BlurFilter(4) : null), [show]);
+  const _blurFilter = useMemo(() => (show ? new BlurFilter(4) : null), [show]);
 
   useEffect(() => {
     setShow(true);

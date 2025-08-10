@@ -21,14 +21,14 @@ export const getSpawnedComponents = (
 
   for (let i = 0; i < spawnCount; i++) {
     const lastCreatedEntity = creations[creations.length - 1];
-    const sortedEntitiesYAsc = solidEntities.sort((a, b) => {
+    const _sortedEntitiesYAsc = solidEntities.sort((a, b) => {
       return (
         (b as any).components.position.positionY -
         (a as any).components.position.positionY
       );
     });
 
-    const sortedEntitiesXDesc = solidEntities.sort((a, b) => {
+    const _sortedEntitiesXDesc = solidEntities.sort((a, b) => {
       return (
         (b as any).components.position.positionX -
         (a as any).components.position.positionX
@@ -104,7 +104,7 @@ export const getSpawnedComponents = (
 export const useSpawnSystem = <
   T extends React.ComponentType<unknown> = React.ComponentType<unknown>,
 >(
-  entityInfo: EntityInfo,
+  _entityInfo: EntityInfo,
   components: SpawnComponent<T>,
 ) => {
   const [spawnCount, setSpawnCount] = useState(0);
