@@ -21,7 +21,6 @@ export const useJumpSystem = (
     ) {
       // TODO: setJumpActivated is not really used here
       components.jump.setJumpActivated(true);
-      console.log("JumpSystem -> components.collision.setIsGrounded(false)")
       components.collision.setIsGrounded(false);
       components.velocity.setVelocityY(-10);
     }

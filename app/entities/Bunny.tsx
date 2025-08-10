@@ -48,8 +48,7 @@ export const Bunny = ({ startX, startY }: Props) => {
     entityInfo,
     components,
     HEIGHT,
-    undefined,
-    -15
+    undefined
   );
   useJumpSystem(entityInfo, components, velocitySystem);
 

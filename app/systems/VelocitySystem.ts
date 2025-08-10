@@ -18,20 +18,9 @@ export const useVelocitySystem = (
     PositionComponent &
     SolidityComponent,
   stopLevel: number,
-  initialVelocity = { x: 0, y: 0.1 },
-  jumpVelocity = -10
+  initialVelocity = { x: 0, y: 0.1 }
 ) => {
   const jumpActivated = useRef(false);
-
-  const stopMovement = (yToStopAt: number) => {
-    console.log("CollisionSystem -> components.collision.setIsGrounded(true);");
-    components.collision.setIsGrounded(true);
-
-    components.position.setPositionY(
-      yToStopAt - components.dimensions.topOffset
-    );
-    components.velocity.setVelocityY(0);
-  };
 
   useTick(() => {
     if (components.velocity) {

@@ -24,7 +24,6 @@ export const useCollisionSystem = (
   const { registry } = useRegisteredEntities();
 
   const stopMovement = (yToStopAt: number) => {
-    console.log("CollisionSystem -> components.collision.setIsGrounded(true);");
     components.collision.setIsGrounded(true);
 
     components.position.setPositionY(

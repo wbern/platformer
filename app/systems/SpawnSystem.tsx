@@ -60,7 +60,6 @@ export const getSpawnedComponents = (
     let startX = lastCreatedEntity?.startX ?? componentInfo.spawn.minDistanceX;
 
     if (direction === "right" && startX + deltaX > WIDTH - 15) {
-      console.log("switch to left");
       direction = "left";
       startX = startX - componentInfo.spawn.maxDistanceX;
       deltaY = snapSingleCoordToGrid(
@@ -73,7 +72,6 @@ export const getSpawnedComponents = (
         )
       );
     } else if (direction === "left" && startX - deltaX < 15) {
-      console.log("switch to right");
       direction = "right";
       startX = startX + componentInfo.spawn.maxDistanceX;
       deltaY = snapSingleCoordToGrid(
@@ -86,10 +84,8 @@ export const getSpawnedComponents = (
         )
       );
     } else if (direction === "right") {
-      console.log("keep right");
       startX = startX + deltaX;
     } else if (direction === "left") {
-      console.log("keep left");
       startX = startX - deltaX;
     }
 
@@ -140,23 +136,14 @@ export const getSpawnedComponent = (
 
   let startX = highestEntity?.components?.position?.positionX ?? 0;
 
-  // if (startX + deltaX > WIDTH - componentInfo.spawn.minDistanceX) {
-  //   debugger;
-  //   console.log("rightmostEntity", rightmostEntity);
-  //   console.log("highestEntity", highestEntity);
-  // }
-
   if (
     startX + deltaX > WIDTH - componentInfo.spawn.minDistanceX &&
     rightmostEntity.id === highestEntity.id
   ) {
-    console.log("Go left!");
     startX = startX - deltaX;
   } else if (rightmostEntity.id === highestEntity.id) {
-    console.log("Go right!");
     startX = startX + deltaX;
   } else {
-    console.log("Go left 2!");
     startX = startX - deltaX;
   }
 
