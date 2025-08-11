@@ -6,7 +6,7 @@ import { usePositionComponent } from "../components/PositionComponent";
 import { useSolidityComponent } from "../components/SolidityComponent";
 import { useRegisterEntity } from "../providers/EntityRegistry";
 import { useEntityInfo } from "../utils/useEntityInfo";
-import platformImg from "../../public/platform.png";
+import platformImg from "../assets/platform.png";
 
 type Props = {
   startX: number;

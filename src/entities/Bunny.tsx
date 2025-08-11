@@ -14,7 +14,7 @@ import { useTouchSystem } from "../systems/TouchSystem";
 import { useCollisionComponent } from "../components/CollisionComponent";
 import { useJumpComponent } from "../components/JumpComponent";
 import { useCollisionSystem } from "../systems/CollisionSystem";
-import bunnyImg from "../../public/bunny.png";
+import bunnyImg from "../assets/bunny.png";
 
 type Props = {
   startX: number;
