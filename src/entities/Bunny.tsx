@@ -14,13 +14,14 @@ import { useTouchSystem } from "../systems/TouchSystem";
 import { useCollisionComponent } from "../components/CollisionComponent";
 import { useJumpComponent } from "../components/JumpComponent";
 import { useCollisionSystem } from "../systems/CollisionSystem";
+import bunnyImg from "../../public/bunny.png";
 
 type Props = {
   startX: number;
   startY: number;
 };
 
-const image = "/bunny.png";
+const image = bunnyImg;
 
 export const Bunny = ({ startX, startY }: Props) => {
   const entityInfo = useEntityInfo("bunny");

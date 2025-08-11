@@ -6,6 +6,7 @@ import { usePositionComponent } from "../components/PositionComponent";
 import { useSolidityComponent } from "../components/SolidityComponent";
 import { useRegisterEntity } from "../providers/EntityRegistry";
 import { useEntityInfo } from "../utils/useEntityInfo";
+import platformImg from "../../public/platform.png";
 
 type Props = {
   startX: number;
@@ -35,7 +36,7 @@ export const Platform = ({ startX, startY, id }: Props) => {
 
   return (
     <Sprite
-      image={"/platform.png"}
+      image={platformImg}
       width={components.dimensions.width}
       height={components.dimensions.height}
       anchor={0.5}

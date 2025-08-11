@@ -4,8 +4,9 @@ import { HEIGHT, WIDTH } from "../constants";
 import { usePositionComponent } from "../components/PositionComponent";
 import { useRegisterEntity } from "../providers/EntityRegistry";
 import { useEntityInfo } from "../utils/useEntityInfo";
+import backgroundImg from "../../public/background.jpg";
 
-const image = "/background.jpg";
+const image = backgroundImg;
 
 export const Background = () => {
   const entityInfo = useEntityInfo("bunny");
