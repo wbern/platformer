@@ -5,6 +5,7 @@ import { EntityInfo } from "../utils/useEntityInfo";
 import { JumpComponent } from "../components/JumpComponent";
 import { CollisionComponent } from "../components/CollisionComponent";
 import { VelocityComponent } from "../components/VelocityComponent";
+import { JUMP_FORCE } from "../constants";
 
 export const useJumpSystem = (
   entityInfo: EntityInfo,
@@ -22,7 +23,9 @@ export const useJumpSystem = (
       // TODO: setJumpActivated is not really used here
       components.jump.setJumpActivated(true);
       components.collision.setIsGrounded(false);
-      components.velocity.setVelocityY(-10);
+      // Use window override for testing if available
+      const jumpForce = (window as any).GAME_JUMP_FORCE || JUMP_FORCE;
+      components.velocity.setVelocityY(jumpForce);
     }
   }, [
     components.collision,
