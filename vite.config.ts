@@ -24,6 +24,12 @@ export default defineConfig({
     target: "esnext",
     minify: "esbuild",
     sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: path.resolve(dirname, "index.html"),
+        notFound: path.resolve(dirname, "404.html"),
+      },
+    },
   },
   optimizeDeps: {
     include: ["pixi.js", "@pixi/react", "@mdx-js/react", "markdown-to-jsx"],

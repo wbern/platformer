@@ -25,6 +25,7 @@ pnpm-debug.log*
 
 # typescript
 *.tsbuildinfo
+vite.config.js
 
 # env
 .env
