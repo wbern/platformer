@@ -5,7 +5,7 @@ import { Bunny } from "../entities/Bunny";
 import { Platform } from "../entities/Platform";
 import { EntityRegistryProvider } from "../providers/EntityRegistry";
 
-const GameWrapper = ({ children }: { children: React.ReactNode }) => {
+const GameWrapper = ({ children }: { children?: React.ReactNode }) => {
   return (
     <EntityRegistryProvider>
       <Stage
